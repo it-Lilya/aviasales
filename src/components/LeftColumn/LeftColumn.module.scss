@@ -1,0 +1,41 @@
+.container {
+  width: 30.7%;
+  background-color: white;
+  border-radius: 5%;
+  box-shadow: 2px 4px 13px -4px rgba(34, 60, 80, 0.2);
+  color: #4A4A4A;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  height: 252px;
+}
+.header {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.container ul {
+  vertical-align: middle;
+  list-style-type: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container ul input {
+  height: 20px;
+  width: 20px;
+}
+.element {
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 40px;
+  font-size: 13px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+}
+.element:hover {
+  background: #F1FCFF;
+}

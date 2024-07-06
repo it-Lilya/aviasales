@@ -1,0 +1,26 @@
+.App {
+  // border: 1px solid red;
+}
+.container {
+  width: 78.5%;
+  margin: auto;
+  padding-top: 50px;
+}
+.logo {
+  background-color: #2196F3;
+  height: 60px;
+  width: 60px;
+  margin: auto;
+  border-radius: 50%;
+  background-image: url('../../logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: 3px 14px 10px -4px rgba(34, 60, 80, 0.2);
+}
+.columns {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+}
