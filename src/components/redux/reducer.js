@@ -1,49 +1,33 @@
+
+import { data } from "../data";
+
 const initialState = {
-  data: JSON.parse(localStorage.getItem('tickets'))
-};
-const sortingReducer = (state = initialState, action) => {
-  // switch (action.type) {
-  //   case 'SET_SORT_ALL':
-  //     return state = JSON.parse(localStorage.getItem('tickets'));
-  //   case 'SET_SORT_ONE_TRANSFER':
-  //     return {
-  //       ...state,
-  //       sortDirection: action.payload
-  //     };
-  //   case 'SET_SORT_TWO_TRANSFERS':
-  //     return {
-  //       ...state,
-  //       sortDirection: action.payload
-  //     };
-  //   case 'SET_SORT_THREE_TRANSFERS':
-  //     return {
-  //       ...state,
-  //       sortDirection: action.payload
-  //     };
-  //   default:
-  //     return state;
-  // }
-   switch (action.type) {
+  datas: data,
+}
+const reducer = (state = initialState, action) => {
+  console.log(action.type)
+  switch (action.type) {
     case 'CHEAP':
-      return state = JSON.parse(localStorage.getItem('tickets'));
+      return {
+        ...state,
+        datas: [
+          [...action.payload].sort((a, b) => a.price - b.price)
+        ]
+      }
     case 'FAST':
       return {
         ...state,
-        sortDirection: action.payload
-      };
+        datas: [
+          [...action.payload].sort((a, b) => a.segments[0].duation - b.segments[0].duation)
+        ]
+      }
     case 'OPTIMAL':
-      return {
-        ...state,
-        sortDirection: action.payload
-      };
-    case 'SET_SORT_THREE_TRANSFERS':
-      return {
-        ...state,
-        sortDirection: action.payload
-      };
+        return {
+          ...state,
+        }
     default:
+      console.log('1');
       return state;
   }
 };
-
-export default sortingReducer;
+export default reducer;

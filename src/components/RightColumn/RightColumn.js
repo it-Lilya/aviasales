@@ -1,12 +1,8 @@
 import classes from './RightColumn.module.scss';
 import Card from '../Card/Card';
-import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function RightColumn({ sortTickets, sorterHandler }) {
-  // useEffect(() => {
-  //   console.log(sortTickets);
-  // });
+export default function RightColumn({ data, sorterHandler }) {
   return (
     <div className={classes.container}>
       <nav className={classes.nav}>
@@ -16,7 +12,7 @@ export default function RightColumn({ sortTickets, sorterHandler }) {
           <li className="optimal filter">Оптимальный</li>
         </ul>
       </nav>
-      {sortTickets.map((elem) => {
+      {data.map((elem) => {
         return (
            <Card elem={elem} key={uuidv4()} />
         )

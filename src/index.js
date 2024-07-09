@@ -7,6 +7,7 @@ import './index.scss';
 import { configureStore } from '@reduxjs/toolkit';
 import reducer from './components/redux/reducer';
 import { Provider } from 'react-redux';
+// import { store } from './components/redux/store';
 
 const store = configureStore({ reducer });
 
