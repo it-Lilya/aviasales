@@ -1,7 +1,6 @@
 import classes from './Card.module.scss';
 import {format} from 'date-fns';
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 export default function Card({ elem }) {
   const [timeOffset, setTimeOffset] = useState(0);
@@ -51,10 +50,10 @@ export default function Card({ elem }) {
             <p className={classes.path_time}>{convertMinutesToHoursAndMinutes(elem.segments[0].duration)}</p>
           </div>
           <div className={classes.transplants}>
-            <p className={classes.transplants_header} key={uuidv4()}>{elem.segments[0].stops.length} пересадки</p>
+            <p className={classes.transplants_header}>{elem.segments[0].stops.length} пересадки</p>
             <div className={classes.transplants_container}>
               {elem.segments[0].stops.map((r) => {
-                return <p className={classes.transplants_info}>{r}</p>
+                return <p className={classes.transplants_info} key={Math.random()}>{r}</p>
               })}
           </div>
           </div>
@@ -74,7 +73,7 @@ export default function Card({ elem }) {
             <p className={classes.transplants_header}>{elem.segments[1].stops.length} пересадки</p>
             <div className={classes.transplants_container}>
               {elem.segments[1].stops.map((r) => {
-                return <p className={classes.transplants_info}>{r}</p>
+                return <p className={classes.transplants_info}  key={Math.random()}>{r}</p>
               })}
           </div>
           </div>

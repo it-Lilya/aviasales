@@ -2,7 +2,7 @@ import classes from './RightColumn.module.scss';
 import Card from '../Card/Card';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function RightColumn({ data, sorterHandler }) {
+export default function RightColumn({ data = [], sorterHandler }) {
   return (
     <div className={classes.container}>
       <nav className={classes.nav}>
