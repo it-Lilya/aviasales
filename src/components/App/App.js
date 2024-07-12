@@ -5,82 +5,101 @@ import RightColumn from '../RightColumn/RightColumn';
 import * as actions from '../../store/actions';
 import { connect, useDispatch, useSelector  } from "react-redux";
 import { bindActionCreators } from "redux";
-import { data } from '../data';
+import { fetchData } from '../../store/asyncAction';
+
+
+queueMicrotask(() => {
+  fetch('https://aviasales-test-api.kata.academy/search')
+    .then((res) => res.json())
+    .then((data) => {
+      localStorage.setItem('id', JSON.stringify(data.searchId));
+    });
+})
 
 function App({cheap, fast, optimal, all, no, one, two, third, none}) {
-  const [searchId, setSearchId] = useState();
+  // const [tickets, setTickets] = useState([]);
+  // const [sortTickets, setSortTickets] = useState([]);
+  // const [flag, setFlag] = useState(false);
+  // const [transplants, setTransplants] = useState('all');
+  // const [filters, setFilters] = useState('cheap');
   const [tickets, setTickets] = useState([]);
-  const [sortTickets, setSortTickets] = useState([]);
-  const [flag, setFlag] = useState(false);
-  const [transplants, setTransplants] = useState('all');
-  const [filters, setFilters] = useState('cheap');
-  const [y, sY] = useState(data);
   const sortData = useSelector(state => state.tickets);
-  const [t, sT] = useState();
+  const [copyData, setCopyData] = useState([]);
+  const [datas, setDatas] = useState([]);
+  const dispatch = useDispatch();
+  // console.log(sortData)
   useEffect(() => {
-    sY(sortData);
+    setTickets(sortData);
   })
   useEffect(() => {
-    fetch('https://aviasales-test-api.kata.academy/search')
-      .then((res) => res.json())
-      .then((data) => {
-        localStorage.setItem('id', JSON.stringify(data.searchId));
-        setSearchId(data.searchId);
-      });
+    setTimeout(() => {
+      dispatch(fetchData());
+    }, 100);
+    // dispatch(fetchData());
+  }, []);
+  useEffect(() => {
+    setCopyData(sortData);
+  }, [sortData])
+  useEffect(() => {
+    // fetch('https://aviasales-test-api.kata.academy/search')
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     localStorage.setItem('id', JSON.stringify(data.searchId));
+    //     setSearchId(data.searchId);
+    //   });
 
     document.querySelectorAll('input').forEach((e) => {
       e.checked = true;
       e.classList.add('check');
     });
   }, []);
-  useEffect(() => {
-      setSortTickets(tickets.slice(0, 5));
-      localStorage.setItem('sort', JSON.stringify(tickets.slice(0, 5)));
-  }, [flag]);
-  useEffect(() => {
-    let arr = [];
-    if (searchId && flag === false) {
-      // function subscribe() {
-      //   fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
-      //     .then((res) => {
-      //       if (res.status === 500) {
-      //         subscribe();
-      //         return
-      //       } else {
-      //         return res.json();
-      //       }
-      //     })
-      //     .then((data) => {
-      //       if (data) {
-      //         setFlag(data.stop);
-      //         arr.push(data.tickets);
-      //         if (!sortTickets) {
-      //           setSortTickets(data.tickets.slice(0, 5));
-      //         }
-      //         if (!data.stop) {
-      //           subscribe();
-      //         } else {
-      //           setTickets(arr.flat());
-      //           localStorage.setItem('tickets', JSON.stringify(arr.flat()));
-      //         }
-      //       }
+  // useEffect(() => {
+  //     // setSortTickets(tickets.slice(0, 5));
+  //     // localStorage.setItem('sort', JSON.stringify(tickets.slice(0, 5)));
+  // }, [flag]);
+  // useEffect(() => {
+  //   let arr = [];
+  //   if (searchId && flag === false) {
+  //     // function subscribe() {
+  //     //   fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
+  //     //     .then((res) => {
+  //     //       if (res.status === 500) {
+  //     //         subscribe();
+  //     //         return
+  //     //       } else {
+  //     //         return res.json();
+  //     //       }
+  //     //     })
+  //     //     .then((data) => {
+  //     //       if (data) {
+  //     //         setFlag(data.stop);
+  //     //         arr.push(data.tickets);
+  //     //         if (!sortTickets) {
+  //     //           setSortTickets(data.tickets.slice(0, 5));
+  //     //         }
+  //     //         if (!data.stop) {
+  //     //           subscribe();
+  //     //         } else {
+  //     //           setTickets(arr.flat());
+  //     //           localStorage.setItem('tickets', JSON.stringify(arr.flat()));
+  //     //         }
+  //     //       }
             
-      //     })
-      // }
-      // subscribe();
-    }
-  }, [searchId]);
+  //     //     })
+  //     // }
+  //     // subscribe();
+  //   }
+  // }, [searchId]);
   function putChecked(e) {
     let arr = [];
-    let transplantsArr = [];
     let arrCheck= [];
     let current;
+    setDatas(JSON.parse(localStorage.getItem('tickets')).slice(0, 5))
     if (e.target.tagName === 'LI') {
       current = e.target.querySelector('input');
     } else {
       current = e.target;
     }
-
     const inputs = document.querySelectorAll('.input');
     if (!current.checked) {
       if (current.value === 'all') {
@@ -116,18 +135,19 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
     inputs.forEach((el) => {
       if (el.checked) {
         arr.push(el.value)
-        transplantsArr.push(el.value);
+        // transplantsArr.push(el.value);
       }
     });
     if (arr.length === 4) {
       document.querySelector('.input__all').checked = true; 
       document.querySelector('.input__all').classList.add('check');
     }
-    if (arr.length === 5) {
-      transplantsArr = [];
-      transplantsArr.push('all');
-    }
-    setTransplants(transplantsArr);
+    // if (arr.length === 5) {
+    //   // transplantsArr = [];
+    //   // transplantsArr.push('all');
+    // }
+    // // console.log(transplantsArr)
+    // // setTransplants(transplantsArr);
     document.querySelectorAll('.check').forEach((el) => {
       if (arrCheck.length === 4 && !arrCheck.find((e) => e == 'all')) {
         arrCheck = ['all']
@@ -135,42 +155,47 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
         arrCheck.push(el.className.split(' ')[1])
       }
      })
-    if (document.querySelector('.input__all').checked === true) {
-      arrCheck = ['all']
-      all(data);
-    } else if (document.querySelector('.no_transfers').checked === true) {
-      no(data, arrCheck);
-    } else if (document.querySelector('.one_transfers').checked === true) {
-      one(data, arrCheck);
-    } else if (document.querySelector('.two_transfers').checked === true) {
-      two(data, arrCheck);
-    } else if (document.querySelector('.third_transfers').checked === true) {
-      third(data, arrCheck)
+    if (current.checked === true) {
+      if (current.classList.contains('input__all')) {
+        all(datas);
+      } else if (current.classList.contains('no_transfers')) {
+        no(arrCheck, datas);
+      } else if (current.classList.contains('one_transfers')) {
+        one(arrCheck, datas);
+      } else if (current.classList.contains('two_transfers')) {
+        two(arrCheck, datas);
+      } else if (current.classList.contains('third_transfers')) {
+        third(arrCheck, datas)
+      }
+    } else {
+      none()
     }
    
     arrCheck.forEach((el) => {
-      switch (el) {
-        case 'one_transfers':
-            one(data, arrCheck);
-          break;
-        case 'two_transfers':
-          two(data, arrCheck);
-          break;
-        case 'third_transfers':
-          third(data, arrCheck);
-          break;
-        case 'all':
-          all(data);
-          break;
-        case 'no_transfers':
-          no(data, arrCheck);
-          break;
-        default:
-          break;
+      if (copyData.length !== 0) {
+        switch (el) {
+          case 'one_transfers':
+            one(arrCheck, datas);
+            break;
+          case 'two_transfers':
+            two(arrCheck, datas);
+            break;
+          case 'third_transfers':
+            third(arrCheck, datas)
+            break;
+          case 'all':
+            all(datas);
+            break;
+          case 'no_transfers':
+            no(arrCheck, datas);
+            break;
+          default:
+            break;
+        }
       }
     })
-    if (!arrCheck.length) {
-      none();
+    if (arrCheck.length === 1 && arrCheck[0] === 'all') {
+      // console.log(arrCheck, y)
     }
   }
   function sorterHandler(e, classes) {
@@ -186,8 +211,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
       el.classList.remove(classes);
     })
     e.target.classList.add(classes);
-    setFilters(nameClass);
-  
+    // setFilters(nameClass);
   }
   return (
     <div className={classes.App}>
@@ -195,7 +219,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
         <div className={classes.logo}></div>
         <div className={classes.columns}>
           <LeftColumn putChecked={putChecked}/>
-          <RightColumn data={y} sorterHandler={sorterHandler} />
+          <RightColumn data={tickets} sorterHandler={sorterHandler} />
         </div>
       </div>
     </div>
