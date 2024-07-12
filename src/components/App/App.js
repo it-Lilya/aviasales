@@ -21,13 +21,15 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
   // const [sortTickets, setSortTickets] = useState([]);
   // const [flag, setFlag] = useState(false);
   // const [transplants, setTransplants] = useState('all');
-  // const [filters, setFilters] = useState('cheap');
+  const [filters, setFilters] = useState('cheap');
   const [tickets, setTickets] = useState([]);
   const sortData = useSelector(state => state.tickets);
   const [copyData, setCopyData] = useState([]);
-  const [datas, setDatas] = useState([]);
+  const [data, setData] = useState([]);
+  const [limit, setLimit] = useState(5);
+  const [arr, setArr] = useState([]);
   const dispatch = useDispatch();
-  // console.log(sortData)
+
   useEffect(() => {
     setTickets(sortData);
   })
@@ -35,7 +37,6 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
     setTimeout(() => {
       dispatch(fetchData());
     }, 100);
-    // dispatch(fetchData());
   }, []);
   useEffect(() => {
     setCopyData(sortData);
@@ -53,6 +54,15 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
       e.classList.add('check');
     });
   }, []);
+  useEffect(() => {
+    if (filters === 'cheap') {
+      cheap(limit);
+    } else if (filters === 'fast') {
+      fast(limit);
+    } else {
+      optimal(limit);
+    }
+  }, [limit])
   // useEffect(() => {
   //     // setSortTickets(tickets.slice(0, 5));
   //     // localStorage.setItem('sort', JSON.stringify(tickets.slice(0, 5)));
@@ -94,7 +104,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
     let arr = [];
     let arrCheck= [];
     let current;
-    setDatas(JSON.parse(localStorage.getItem('tickets')).slice(0, 5))
+    setData(JSON.parse(localStorage.getItem('tickets')).slice(0, 5))
     if (e.target.tagName === 'LI') {
       current = e.target.querySelector('input');
     } else {
@@ -135,19 +145,12 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
     inputs.forEach((el) => {
       if (el.checked) {
         arr.push(el.value)
-        // transplantsArr.push(el.value);
       }
     });
     if (arr.length === 4) {
       document.querySelector('.input__all').checked = true; 
       document.querySelector('.input__all').classList.add('check');
     }
-    // if (arr.length === 5) {
-    //   // transplantsArr = [];
-    //   // transplantsArr.push('all');
-    // }
-    // // console.log(transplantsArr)
-    // // setTransplants(transplantsArr);
     document.querySelectorAll('.check').forEach((el) => {
       if (arrCheck.length === 4 && !arrCheck.find((e) => e == 'all')) {
         arrCheck = ['all']
@@ -157,61 +160,68 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
      })
     if (current.checked === true) {
       if (current.classList.contains('input__all')) {
-        all(datas);
+        all(data, limit);
       } else if (current.classList.contains('no_transfers')) {
-        no(arrCheck, datas);
+        no(arrCheck, data, limit);
       } else if (current.classList.contains('one_transfers')) {
-        one(arrCheck, datas);
+        one(arrCheck, data, limit);
       } else if (current.classList.contains('two_transfers')) {
-        two(arrCheck, datas);
+        two(arrCheck, data, limit);
       } else if (current.classList.contains('third_transfers')) {
-        third(arrCheck, datas)
+        third(arrCheck, data, limit)
       }
     } else {
-      none()
+      none(data)
     }
    
     arrCheck.forEach((el) => {
       if (copyData.length !== 0) {
         switch (el) {
           case 'one_transfers':
-            one(arrCheck, datas);
+            one(arrCheck, data);
             break;
           case 'two_transfers':
-            two(arrCheck, datas);
+            two(arrCheck, data);
             break;
           case 'third_transfers':
-            third(arrCheck, datas)
+            third(arrCheck, data)
             break;
           case 'all':
-            all(datas);
+            all(data);
             break;
           case 'no_transfers':
-            no(arrCheck, datas);
+            no(arrCheck, data);
             break;
           default:
             break;
         }
       }
     })
-    if (arrCheck.length === 1 && arrCheck[0] === 'all') {
-      // console.log(arrCheck, y)
-    }
+    setArr(arrCheck);
+    // if (arrCheck.length === 1 && arrCheck[0] === 'all') {
+    //   // console.log(arrCheck, y)
+    // }
   }
   function sorterHandler(e, classes) {
     if (e.target.classList.contains('cheap')) {
-      cheap();
+      setFilters('cheap');
+      cheap(limit, tickets);
     } else if (e.target.classList.contains('fast')) {
-      fast();
+      setFilters('fast');
+      fast(limit, tickets);
     } else {
-      optimal();
+      setFilters('optimal');
+      optimal(limit, tickets);
     }
-    let nameClass = e.target.className.split(' ')[0];
+    // let nameClass = e.target.className.split(' ')[0];
     document.querySelectorAll('.filter').forEach((el) => {
       el.classList.remove(classes);
     })
     e.target.classList.add(classes);
     // setFilters(nameClass);
+  }
+  function limits() {
+    setLimit(limit + 5);
   }
   return (
     <div className={classes.App}>
@@ -219,7 +229,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
         <div className={classes.logo}></div>
         <div className={classes.columns}>
           <LeftColumn putChecked={putChecked}/>
-          <RightColumn data={tickets} sorterHandler={sorterHandler} />
+          <RightColumn data={tickets} sorterHandler={sorterHandler} limits={limits} />
         </div>
       </div>
     </div>

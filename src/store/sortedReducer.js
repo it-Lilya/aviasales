@@ -1,22 +1,21 @@
 // import { data } from "../components/data"
 const initialState = {
   tickets: [],
-  sorted: 'cheap'
+  sorted: 'cheap',
+  allTickets: []
 }
-let arr = []
 const sortedReducer = (state = initialState, action) => {
-  // console.log(state.tickets, action.payload, action.type)
   switch (action.type) {
     case 'CHEAP':
       return {
         ...state,
-        tickets: [...state.tickets].sort((a, b) => a.price - b.price),
+        tickets: [...state.allTickets].slice(0, action.limit).sort((a, b) => a.price - b.price),
         sorted: 'cheap'
       }
     case 'FAST':
       return {
         ...state,
-        tickets: [...state.tickets].sort((a, b) => a.segments[0].duration - b.segments[0].duration),
+        tickets: [...state.allTickets].slice(0, action.limit).sort((a, b) => a.segments[0].duration - b.segments[0].duration),
         sorted: 'fast'
       }
     case 'OPTIMAL':
@@ -27,7 +26,7 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        tickets: [...state.tickets].sort((a, b) => optimalSorting(a) - optimalSorting(b)),
+        tickets: [...state.allTickets].slice(0, action.limit).sort((a, b) => optimalSorting(a) - optimalSorting(b)),
         sorted: 'optimal'
       }
     case 'ALL':
@@ -48,7 +47,6 @@ const sortedReducer = (state = initialState, action) => {
         }
       }
     case 'NO_TRANSFERS':
-     
     if (action.filters.length > 1 && !state.tickets.find((el) => el.segments[0].stops.length === 0)) {
       return {
         ...state,
@@ -113,6 +111,7 @@ const sortedReducer = (state = initialState, action) => {
       return {
         ...state,
         tickets: action.payload.tickets.slice(0, 5).sort((a, b) => a.price - b.price),
+        allTickets: action.payload.tickets,
         isLoading: false,
       }
       case 'FETCH_DATA_FAILURE':

@@ -2,7 +2,7 @@ import classes from './RightColumn.module.scss';
 import Card from '../Card/Card';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function RightColumn({ data = [], sorterHandler }) {
+export default function RightColumn({ data = [], sorterHandler, limits }) {
   return (
     <div className={classes.container}>
       <nav className={classes.nav}>
@@ -17,7 +17,7 @@ export default function RightColumn({ data = [], sorterHandler }) {
            <Card elem={elem} key={uuidv4()} />
         )
       })}
-      <button className={classes.more}>Показать еще 5 билетов</button>
+      <button className={classes.more} onClick={limits}>Показать еще 5 билетов</button>
     </div>
   )
 }
