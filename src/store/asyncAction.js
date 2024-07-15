@@ -29,12 +29,14 @@ export const fetchData = () => {
       //     })
       // }
       // ================================
-        return async function subscribe (dispatch) {
-          dispatch({type: 'FETCH_DATA_REQUEST'});
+        return async function subscribe(dispatch) {
+          // console.log(dispatch)
           try {
+            dispatch({type: 'FETCH_DATA_REQUEST'});
             await fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${JSON.parse(localStorage.getItem('id'))}`)
               .then((res) => {
                 if (res.status === 500) {
+                  console.log(res.status)
                   subscribe();
                   return;
                 } else {
@@ -45,14 +47,17 @@ export const fetchData = () => {
               .then((data) => {
                 if (data) {
                   // arr.push(data.tickets);
-              
                   dispatch({ type: 'ADD_TICKETS', payload: data});
                   // localStorage.setItem('tickets', JSON.stringify(data.tickets.slice(0, 5)));
                 }
               })
-              .catch((err) =>  dispatch({ type: 'FETCH_DATA_FAILURE', payload: 'error '}))
+              .catch((err) => {
+                subscribe();
+                // dispatch({ type: 'FETCH_DATA_FAILURE', payload: err})
+          })
           } catch (error) {
-            // return dispatch({ type: 'FETCH_DATA_FAILURE', payload: error });
+            // subscribe();
+            return dispatch({ type: 'FETCH_DATA_FAILURE', payload: error });
           }
         };
 

@@ -16,18 +16,14 @@ queueMicrotask(() => {
     });
 })
 
-function App({cheap, fast, optimal, all, no, one, two, third, none}) {
-  // const [tickets, setTickets] = useState([]);
-  // const [sortTickets, setSortTickets] = useState([]);
-  // const [flag, setFlag] = useState(false);
-  // const [transplants, setTransplants] = useState('all');
+function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
   const [filters, setFilters] = useState('cheap');
   const [tickets, setTickets] = useState([]);
   const sortData = useSelector(state => state.tickets);
   const [copyData, setCopyData] = useState([]);
   const [data, setData] = useState([]);
   const [limit, setLimit] = useState(5);
-  const [arr, setArr] = useState([]);
+  const [arr, setArr] = useState(['all']);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -158,50 +154,76 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
         arrCheck.push(el.className.split(' ')[1])
       }
      })
-    if (current.checked === true) {
-      if (current.classList.contains('input__all')) {
-        all(data, limit);
-      } else if (current.classList.contains('no_transfers')) {
-        no(arrCheck, data, limit);
-      } else if (current.classList.contains('one_transfers')) {
-        one(arrCheck, data, limit);
-      } else if (current.classList.contains('two_transfers')) {
-        two(arrCheck, data, limit);
-      } else if (current.classList.contains('third_transfers')) {
-        third(arrCheck, data, limit)
-      }
+
+     const dataTickets = JSON.parse(localStorage.getItem('tickets'));
+     if (arrCheck.length === 0) {
+      arrCheck = ['none'];
+      none(dataTickets, arrCheck);
     } else {
-      none(data)
-    }
-   
-    arrCheck.forEach((el) => {
-      if (copyData.length !== 0) {
+      arrCheck.forEach((el) => {
         switch (el) {
           case 'one_transfers':
-            one(arrCheck, data);
+            one(arrCheck, dataTickets, limit);
             break;
           case 'two_transfers':
-            two(arrCheck, data);
+            two(arrCheck, dataTickets, limit);
             break;
           case 'third_transfers':
-            third(arrCheck, data)
+            third(arrCheck, dataTickets, limit)
             break;
           case 'all':
-            all(data);
+            all(arrCheck, dataTickets, limit);
             break;
           case 'no_transfers':
-            no(arrCheck, data);
+            no(arrCheck, dataTickets, limit);
             break;
-          default:
-            break;
-        }
       }
     })
+    }
+    if (current.checked !== true && current.value !== 'all') {
+      // if (!current.classList.contains('input__all')) {
+      //   // toggle(dataTickets, current.className.split(' ')[1]);
+      //   console.log('a')
+      //   arrCheck.push('toggle')
+      // }
+      // arrCheck
+     toggle(dataTickets, arrCheck, current.className.split(' ')[1]);
+    } else if (current.checked === true) {
+      //  if (current.classList.contains('input__all')) {
+      //   all(arrCheck, dataTickets, limit);
+      // } else if (current.classList.contains('no_transfers')) {
+      //   no(arrCheck, dataTickets, limit);
+      // } else if (current.classList.contains('one_transfers')) {
+      //   one(arrCheck, dataTickets, limit);
+      // } else if (current.classList.contains('two_transfers')) {
+      //   two(arrCheck, dataTickets, limit);
+      // } else if (current.classList.contains('third_transfers')) {
+      //   third(arrCheck, dataTickets, limit)
+      // } 
+    }
+    // arrCheck.forEach((el) => {
+    //     switch (el) {
+    //       case 'one_transfers':
+    //         one(arrCheck, dataTickets, limit);
+    //         break;
+    //       case 'two_transfers':
+    //         two(arrCheck, dataTickets, limit);
+    //         break;
+    //       case 'third_transfers':
+    //         third(arrCheck, dataTickets, limit)
+    //         break;
+    //       case 'all':
+    //         all(arrCheck, dataTickets, limit);
+    //         break;
+    //       case 'no_transfers':
+    //         no(arrCheck, dataTickets, limit);
+    //         break;
+    //   }
+    // })
     setArr(arrCheck);
-    // if (arrCheck.length === 1 && arrCheck[0] === 'all') {
-    //   // console.log(arrCheck, y)
-    // }
   }
+  // useEffect(() => {
+  // } , [tickets])
   function sorterHandler(e, classes) {
     if (e.target.classList.contains('cheap')) {
       setFilters('cheap');
@@ -221,7 +243,10 @@ function App({cheap, fast, optimal, all, no, one, two, third, none}) {
     // setFilters(nameClass);
   }
   function limits() {
-    setLimit(limit + 5);
+    if (arr[0] !== 'none') {
+      setLimit(limit + 5);
+    }
+    
   }
   return (
     <div className={classes.App}>
