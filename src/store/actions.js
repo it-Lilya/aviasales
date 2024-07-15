@@ -1,7 +1,4 @@
-// import { data } from "../components/data";
-// let r = JSON.parse(localStorage.getItem('t')).sort((a, b) => a.price - b.price);
 export const cheap = (limit, data) => {
-  // console.log(data)
   return {
     type: 'CHEAP',
     payload: data,
