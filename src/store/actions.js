@@ -74,3 +74,21 @@ export const toggle = (data, filters, el) => {
     element: el
   }
 }
+export const fetchDataRequest = () => {
+  return {
+    type: 'FETCH_DATA_REQUEST'
+  }
+}
+export const fetchDataSuccess = (data) => {
+  return {
+    type: 'FETCH_DATA_SUCCESS',
+    payload: data
+  }
+};
+export const fetchDataAllSuccess = (data) => {
+  return {
+    type: 'FETCH_DATA_ALL_SUCCESS',
+    payload: data
+  }
+};
+

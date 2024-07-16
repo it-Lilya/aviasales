@@ -4,33 +4,34 @@ const initialState = {
   filters: ['all'],
   limit: 5,
   allTickets: [],
-  activeLimit: 5
+  activeLimit: 5,
+  isLoading: true
 };
 
 const sortPrice = (arr, limit, all, prevLimit) => {
   if (limit !== prevLimit) {
-    localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
+    // localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
     return all.slice(0, limit).sort((a, b) => a.price - b.price);
   }
-  localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
+  // localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
   return arr.slice(0, limit).sort((a, b) => a.price - b.price);
 };
 
 const sortDuration = (arr, limit, all, prevLimit) => {
   if (limit !== prevLimit) {
-    localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
+    // localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
     return all.slice(0, limit).sort((a, b) => a.segments[0].duration - b.segments[0].duration);
   }
-  localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
+  // localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
   return arr.slice(0, limit).sort((a, b) => a.segments[0].duration - b.segments[0].duration);
 };
 
 const sortOptimal = (arr, limit, all, prevLimit) => {
   if (limit !== prevLimit) {
-    localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
+    // localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
     return all.slice(0, limit).sort((a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration));
   }
-  localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
+  // localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
   return arr.slice(0, limit).sort((a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration));
 };
 
@@ -87,7 +88,6 @@ const removeDuplicates = (arr) => {
 const sortedReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'CHEAP':
-      console.log(state.filters)
       let array = [];
       if (state.filters.length === 0) {
         array = [];
@@ -212,20 +212,18 @@ const sortedReducer = (state = initialState, action) => {
         isLoading: true,
         tickets: []
       };
-    case 'ADD_TICKETS':
-      localStorage.setItem('tickets', JSON.stringify(action.payload.tickets));
+    case 'FETCH_DATA_SUCCESS':
       return {
         ...state,
-        tickets: sortPrice(action.payload.tickets, state.limit, action.payload.tickets),
-        allTickets: action.payload.tickets,
-        isLoading: false
+        tickets: sortPrice(action.payload.tickets, state.limit, action.payload),
+        allTickets: [...action.payload],
+        isLoading: true
       };
-    case 'FETCH_DATA_FAILURE':
+    case 'FETCH_DATA_ALL_SUCCESS':
       return {
         ...state,
-        isLoading: false,
-        tickets: state.tickets,
-        error: action.payload
+        allTickets: [...action.payload],
+        isLoading: false
       };
     default:
       return state;

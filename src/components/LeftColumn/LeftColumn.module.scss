@@ -23,9 +23,39 @@
   padding: 0;
   box-sizing: border-box;
 }
-.container ul input {
+.container ul input[type="checkbox"] {
+  appearance: none;
+  background: transparent;
+  // border: 1px solid #9ABBCE;
   height: 20px;
   width: 20px;
+  margin-right: 10px;
+  vertical-align: text-bottom;
+  position: relative;
+  box-sizing: border-box;
+}
+.container ul input[type="checkbox"]:not(:checked) {
+  border: 1px solid #9ABBCE;
+}
+input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  top: 0;
+  height: 20px;
+  width: 20px;
+}
+.container ul input[type="checkbox"]:checked {
+  border: 1px solid #2196F3
+}
+.container ul input[type="checkbox"]:checked::before {
+  background-image: url('../../../Shape.svg');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .element {
   padding-left: 20px;

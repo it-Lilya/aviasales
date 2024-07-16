@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import classes from './App.module.scss';
 import LeftColumn from '../LeftColumn/LeftColumn';
 import RightColumn from '../RightColumn/RightColumn';
 import * as actions from '../../store/actions';
+import {fetchDataRequest} from '../../store/actions';
 import { connect, useDispatch, useSelector  } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchData } from '../../store/asyncAction';
-
 
 queueMicrotask(() => {
   fetch('https://aviasales-test-api.kata.academy/search')
@@ -20,31 +20,27 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
   const [filters, setFilters] = useState('cheap');
   const [tickets, setTickets] = useState([]);
   const sortData = useSelector(state => state.tickets);
-  const [copyData, setCopyData] = useState([]);
-  const [data, setData] = useState([]);
+  const loaded = useSelector(state => state.isLoading);
   const [limit, setLimit] = useState(5);
   const [arr, setArr] = useState(['all']);
+  const progressBar = useRef(null);
+  const loaderRef = useRef(0);
   const dispatch = useDispatch();
-
+  const [intervals, setIntervals] = useState();
+  const [loadedState, setLoadedState] = useState(loaded);
   useEffect(() => {
     setTickets(sortData);
-  })
+  });
+
   useEffect(() => {
+    dispatch(fetchDataRequest());
     setTimeout(() => {
-      dispatch(fetchData());
+      dispatch(fetchData(`https://aviasales-test-api.kata.academy/tickets?searchId=${JSON.parse(localStorage.getItem('id'))}`));
     }, 100);
+    setIntervals(() => setInterval(() => increase() , 100))
+    setLoadedState(loaded);
   }, []);
   useEffect(() => {
-    setCopyData(sortData);
-  }, [sortData])
-  useEffect(() => {
-    // fetch('https://aviasales-test-api.kata.academy/search')
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     localStorage.setItem('id', JSON.stringify(data.searchId));
-    //     setSearchId(data.searchId);
-    //   });
-
     document.querySelectorAll('input').forEach((e) => {
       e.checked = true;
       e.classList.add('check');
@@ -58,49 +54,34 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
     } else {
       optimal(limit);
     }
-  }, [limit])
-  // useEffect(() => {
-  //     // setSortTickets(tickets.slice(0, 5));
-  //     // localStorage.setItem('sort', JSON.stringify(tickets.slice(0, 5)));
-  // }, [flag]);
-  // useEffect(() => {
-  //   let arr = [];
-  //   if (searchId && flag === false) {
-  //     // function subscribe() {
-  //     //   fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
-  //     //     .then((res) => {
-  //     //       if (res.status === 500) {
-  //     //         subscribe();
-  //     //         return
-  //     //       } else {
-  //     //         return res.json();
-  //     //       }
-  //     //     })
-  //     //     .then((data) => {
-  //     //       if (data) {
-  //     //         setFlag(data.stop);
-  //     //         arr.push(data.tickets);
-  //     //         if (!sortTickets) {
-  //     //           setSortTickets(data.tickets.slice(0, 5));
-  //     //         }
-  //     //         if (!data.stop) {
-  //     //           subscribe();
-  //     //         } else {
-  //     //           setTickets(arr.flat());
-  //     //           localStorage.setItem('tickets', JSON.stringify(arr.flat()));
-  //     //         }
-  //     //       }
-            
-  //     //     })
-  //     // }
-  //     // subscribe();
-  //   }
-  // }, [searchId]);
+  }, [limit]);
+  useEffect(() => {
+    if (loaded === false) {
+      loaderRef.current = 100;
+      setTimeout(() => {
+        setIntervals(clearInterval(intervals));
+        setLoadedState(false);
+      }, 1000);
+    }
+  }, [loaded])
+  function increase() {
+    if (loaderRef.current <= 100) {
+      loaderRef.current = loaderRef.current + 1.2;
+      if (progressBar.current) {
+        progressBar.current.style.width = `${loaderRef.current}%`;
+      }
+    } else {
+      setTimeout(() => {
+        setIntervals(clearInterval(intervals));
+        setLoadedState(false);
+      }, 350)
+    }
+    return loaderRef.current
+  }
   function putChecked(e) {
     let arr = [];
     let arrCheck= [];
     let current;
-    setData(JSON.parse(localStorage.getItem('tickets')).slice(0, 5))
     if (e.target.tagName === 'LI') {
       current = e.target.querySelector('input');
     } else {
@@ -179,7 +160,6 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
     setArr(arrCheck);
   }
   function sorterHandler(e, classes) {
-    console.log(tickets)
     if (tickets.length) {
       if (e.target.classList.contains('cheap')) {
         setFilters('cheap');
@@ -201,15 +181,18 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
     if (arr[0] !== 'none') {
       setLimit(limit + 5);
     }
-    
   }
   return (
     <div className={classes.App}>
+      {loadedState ? 
+      (<div className="progress" style={{height: '10px', borderRadius: '0px', position: 'absolute', width: '100%', top: '0px', zIndex: '2'}}>
+          <div ref={progressBar} role="progressbar" className="progress-bar progress-bar-animated progress-bar-striped" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style={{width: "20%"}}></div>
+        </div>) : null} 
       <div className={classes.container}>
         <div className={classes.logo}></div>
         <div className={classes.columns}>
           <LeftColumn putChecked={putChecked}/>
-          <RightColumn data={tickets} sorterHandler={sorterHandler} limits={limits} />
+          <RightColumn data={tickets} sorterHandler={sorterHandler} limits={limits} arr={arr} />
         </div>
       </div>
     </div>
@@ -226,4 +209,3 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-// export default App;
