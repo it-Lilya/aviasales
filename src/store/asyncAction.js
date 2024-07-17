@@ -1,4 +1,4 @@
-import { fetchDataAllSuccess, fetchDataSuccess, fetchDataFailure } from './actions';
+import { fetchDataAllSuccess, fetchDataSuccess } from './actions';
 
 let arr = [];
 let done = false;
@@ -8,7 +8,7 @@ export const fetchData = (url) => {
       const response = await fetch(url);
       if (!response.ok) {
         // console.log(response.status);
-        dispatch(fetchDataFailure(response.status));
+        // dispatch(fetchDataFailure(response.status));
         throw new Error(`Ошибка: ${response.status}`);
       }
       const res = await response.json();
@@ -27,7 +27,7 @@ export const fetchData = (url) => {
         }
       }
     } catch (error) {
-      dispatch(fetchDataFailure(error.message));
+      // dispatch(fetchDataFailure(error.message));
       return func(dispatch);
       // if (error.message.includes('500')) {
       //   dispatch(fetchDataFailure(error.message));
