@@ -31,8 +31,8 @@ export const no = (filters, data, limit) => {
   return {
     type: 'NO_TRANSFERS',
     payload: data,
-    filters: filters,
     limit: limit,
+    filters: filters,
   };
 };
 export const one = (filters, data, limit) => {
