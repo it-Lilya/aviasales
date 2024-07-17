@@ -1,6 +1,7 @@
+import React, { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+
 import classes from './Card.module.scss';
-import {format} from 'date-fns';
-import { useEffect, useState } from 'react';
 
 export default function Card({ elem }) {
   const [timeOffset, setTimeOffset] = useState(0);
@@ -31,7 +32,7 @@ export default function Card({ elem }) {
   }
   function priceFormat(str) {
     const arrPrice = String(str).split('');
-    return `${(arrPrice.slice(0, arrPrice.length - 3)).join('')} ${(arrPrice.slice(arrPrice.length - 3).join(''))}`
+    return `${arrPrice.slice(0, arrPrice.length - 3).join('')} ${arrPrice.slice(arrPrice.length - 3).join('')}`;
   }
   return (
     <div className={classes.container}>
@@ -42,8 +43,12 @@ export default function Card({ elem }) {
       <div className={classes.main}>
         <div className={classes.information}>
           <div className={classes.first}>
-            <p className={classes.direction}>{elem.segments[0].origin} - {elem.segments[1].origin} </p>
-            <p className={classes.time}>{timeFormat(elem.segments[0].date)} - {difference(elem.segments[0].duration, elem.segments[0].date)}</p>
+            <p className={classes.direction}>
+              {elem.segments[0].origin} - {elem.segments[1].origin}
+            </p>
+            <p className={classes.time}>
+              {timeFormat(elem.segments[0].date)} - {difference(elem.segments[0].duration, elem.segments[0].date)}
+            </p>
           </div>
           <div className={classes.path}>
             <p className={classes.path_header}>В пути</p>
@@ -52,18 +57,26 @@ export default function Card({ elem }) {
           <div className={classes.transplants}>
             <p className={classes.transplants_header}>{elem.segments[0].stops.length} пересадки</p>
             <div className={classes.transplants_container}>
-              {elem.segments[0].stops.map((r) => {
-                return <p className={classes.transplants_info} key={Math.random()}>{r}</p>
+              {elem.segments[0].stops.map((el) => {
+                return (
+                  <p className={classes.transplants_info} key={Math.random()}>
+                    {el}
+                  </p>
+                );
               })}
-          </div>
+            </div>
           </div>
         </div>
       </div>
       <div className={classes.main}>
         <div className={classes.information}>
           <div className={classes.first}>
-            <p className={classes.direction}>{elem.segments[1].origin} - {elem.segments[0].origin}</p>
-            <p className={classes.time}>{timeFormat(elem.segments[1].date)} - {difference(elem.segments[1].duration, elem.segments[1].date)}</p>
+            <p className={classes.direction}>
+              {elem.segments[1].origin} - {elem.segments[0].origin}
+            </p>
+            <p className={classes.time}>
+              {timeFormat(elem.segments[1].date)} - {difference(elem.segments[1].duration, elem.segments[1].date)}
+            </p>
           </div>
           <div className={classes.path}>
             <p className={classes.path_header}>В пути</p>
@@ -72,13 +85,17 @@ export default function Card({ elem }) {
           <div className={classes.transplants}>
             <p className={classes.transplants_header}>{elem.segments[1].stops.length} пересадки</p>
             <div className={classes.transplants_container}>
-              {elem.segments[1].stops.map((r) => {
-                return <p className={classes.transplants_info}  key={Math.random()}>{r}</p>
+              {elem.segments[1].stops.map((el) => {
+                return (
+                  <p className={classes.transplants_info} key={Math.random()}>
+                    {el}
+                  </p>
+                );
               })}
-          </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

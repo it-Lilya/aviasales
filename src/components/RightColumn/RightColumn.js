@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import classes from './RightColumn.module.scss';
-import Card from '../Card/Card';
+import { Alert } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
-import { Alert } from "antd";
+
+import Card from '../Card/Card';
+
+import classes from './RightColumn.module.scss';
 
 export default function RightColumn({ data = [], sorterHandler, limits, arr }) {
   // const [resultData, setResultData] = useState(data);
@@ -13,7 +15,7 @@ export default function RightColumn({ data = [], sorterHandler, limits, arr }) {
     } else {
       setFlag(true);
     }
-  }, [arr])
+  }, [arr]);
   return (
     <div className={classes.container}>
       <nav className={classes.nav}>
@@ -23,19 +25,22 @@ export default function RightColumn({ data = [], sorterHandler, limits, arr }) {
           <li className="optimal filter">Оптимальный</li>
         </ul>
       </nav>
-      {flag ? 
-      <>
-      {data.map((elem) => {
-        return (
-           <Card elem={elem} key={uuidv4()} />
-        )
-      }) }
-      <button className={classes.more} onClick={limits}>Показать еще 5 билетов</button>
-      </>
-      : 
-      <Alert className={classes.alert} message="Рейсов, подходящих под заданные фильтры, не найдено" type="info"></Alert>
-    }
-     
+      {flag ? (
+        <>
+          {data.map((elem) => {
+            return <Card elem={elem} key={uuidv4()} />;
+          })}
+          <button className={classes.more} onClick={limits}>
+            Показать еще 5 билетов
+          </button>
+        </>
+      ) : (
+        <Alert
+          className={classes.alert}
+          message="Рейсов, подходящих под заданные фильтры, не найдено"
+          type="info"
+        ></Alert>
+      )}
     </div>
-  )
+  );
 }

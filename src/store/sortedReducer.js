@@ -5,7 +5,7 @@ const initialState = {
   limit: 5,
   allTickets: [],
   activeLimit: 5,
-  isLoading: true
+  isLoading: true,
 };
 
 const sortPrice = (arr, limit, all, prevLimit) => {
@@ -30,10 +30,18 @@ const sortDuration = (arr, limit, all, prevLimit) => {
 const sortOptimal = (arr, limit, all, prevLimit) => {
   if (limit !== prevLimit) {
     // localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
-    return all.slice(0, limit).sort((a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration));
+    return all
+      .slice(0, limit)
+      .sort(
+        (a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration)
+      );
   }
   // localStorage.setItem('tickets', JSON.stringify(arr.slice(0, limit)));
-  return arr.slice(0, limit).sort((a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration));
+  return arr
+    .slice(0, limit)
+    .sort(
+      (a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration)
+    );
 };
 
 const filtration = (arr, num) => {
@@ -63,11 +71,11 @@ const filerSort = (arr, state, action) => {
 const toggleTicket = (tickets, elem) => {
   let newArr = [];
   if (elem === 'one_transfers') {
-    newArr.push(tickets.filter(t => t.segments[0].stops.length !== 1));
+    newArr.push(tickets.filter((t) => t.segments[0].stops.length !== 1));
   } else if (elem === 'two_transfers') {
-    newArr.push(tickets.filter(t => t.segments[0].stops.length !== 2));
+    newArr.push(tickets.filter((t) => t.segments[0].stops.length !== 2));
   } else if (elem === 'third_transfers') {
-    newArr.push(tickets.filter(t => t.segments[0].stops.length !== 3));
+    newArr.push(tickets.filter((t) => t.segments[0].stops.length !== 3));
   }
   return newArr[0];
 };
@@ -75,7 +83,7 @@ const removeDuplicates = (arr) => {
   const uniqueTickets = [];
   const ticketSet = new Set();
 
-  arr.forEach(ticket => {
+  arr.forEach((ticket) => {
     const ticketString = JSON.stringify(ticket);
     if (!ticketSet.has(ticketString)) {
       ticketSet.add(ticketString);
@@ -94,12 +102,12 @@ const searchDirection = (arr, quantity) => {
   if (oneSegments.length === 0) {
     return twoSegments;
   } else {
-  return oneSegments;
+    return oneSegments;
   }
-}
+};
 const sortedReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'CHEAP':
+    case 'CHEAP': {
       let array = [];
       if (state.filters.length === 0) {
         array = [];
@@ -114,17 +122,17 @@ const sortedReducer = (state = initialState, action) => {
         return {
           ...state,
           tickets: array.flat(),
-          sorted: 'cheap'
+          sorted: 'cheap',
         };
       } else {
         return {
           ...state,
           tickets: [],
-          sorted: 'cheap'
+          sorted: 'cheap',
         };
       }
-      
-    case 'FAST':
+    }
+    case 'FAST': {
       let arr = [];
       if (state.filters.length === 0) {
         arr = [];
@@ -138,9 +146,10 @@ const sortedReducer = (state = initialState, action) => {
       return {
         ...state,
         tickets: arr.flat(),
-        sorted: 'fast'
+        sorted: 'fast',
       };
-    case 'OPTIMAL':
+    }
+    case 'OPTIMAL': {
       let arrays = [];
       if (state.filters.length === 0) {
         arrays = [];
@@ -154,9 +163,10 @@ const sortedReducer = (state = initialState, action) => {
       return {
         ...state,
         tickets: arrays.flat(),
-        sorted: 'optimal'
+        sorted: 'optimal',
       };
-    case 'ALL':
+    }
+    case 'ALL': {
       let resAll = [];
       if (state.sorted === 'cheap') {
         resAll = sortPrice(action.payload, action.limit, state.allTickets, state.limit);
@@ -168,19 +178,21 @@ const sortedReducer = (state = initialState, action) => {
       return {
         ...state,
         tickets: resAll,
-        filters: action.filters
+        filters: action.filters,
       };
-    case 'NO_TRANSFERS':
+    }
+    case 'NO_TRANSFERS': {
       let resNo = [];
       resNo = filerSort(resNo, state, action);
       return {
         ...state,
-        tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resNo, state, action), 0),].flat()),
+        tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resNo, state, action), 0)].flat()),
         // tickets: removeDuplicates([state.tickets, filerSort(resNo, state, action).filter((el) => el.segments[0].stops.length === 0)].flat()),
         filters: action.filters,
-        limit: action.limit
+        limit: action.limit,
       };
-    case 'ONE_TRANSFERS':
+    }
+    case 'ONE_TRANSFERS': {
       let resOne = [];
       resOne = filerSort(resOne, state, action);
       return {
@@ -188,9 +200,10 @@ const sortedReducer = (state = initialState, action) => {
         tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resOne, state, action), 1)].flat()),
         // tickets: removeDuplicates([state.tickets, filerSort(resOne, state, action).filter((el) => el.segments[0].stops.length === 1)].flat()),
         filters: action.filters,
-        limit: action.limit
+        limit: action.limit,
       };
-    case 'TWO_TRANSFERS':
+    }
+    case 'TWO_TRANSFERS': {
       let resTwo = [];
       resTwo = filerSort(resTwo, state, action);
       return {
@@ -198,9 +211,10 @@ const sortedReducer = (state = initialState, action) => {
         tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resTwo, state, action), 2)].flat()),
         // tickets: removeDuplicates([state.tickets, filerSort(resTwo, state, action).filter((el) => el.segments[0].stops.length === 2)].flat()),
         filters: action.filters,
-        limit: action.limit
+        limit: action.limit,
       };
-    case 'THIRD_TRANSFERS':
+    }
+    case 'THIRD_TRANSFERS': {
       let resThird = [];
       resThird = filerSort(resThird, state, action);
       return {
@@ -208,39 +222,53 @@ const sortedReducer = (state = initialState, action) => {
         tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resThird, state, action), 3)].flat()),
         // tickets: removeDuplicates([state.tickets, filerSort(resThird, state, action).filter((el) => el.segments[0].stops.length === 3)].flat()),
         filters: action.filters,
-        limit: action.limit
+        limit: action.limit,
       };
-      case 'TOGGLE_TICKET':
-        return {
-          ...state,
-          tickets: toggleTicket(state.tickets, action.element),
-          filters: [...state.filters.filter((n) => n !== action.element)]
-        };
-    case 'NONE':
+    }
+    case 'TOGGLE_TICKET': {
+      return {
+        ...state,
+        tickets: toggleTicket(state.tickets, action.element),
+        filters: [...state.filters.filter((n) => n !== action.element)],
+      };
+    }
+    case 'NONE': {
       return {
         ...state,
         tickets: [],
-        filters: action.filters
+        filters: action.filters,
       };
-    case 'FETCH_DATA_REQUEST':
+    }
+    case 'FETCH_DATA_REQUEST': {
       return {
         ...state,
         isLoading: true,
-        tickets: []
+        tickets: [],
       };
-    case 'FETCH_DATA_SUCCESS':
+    }
+    case 'FETCH_DATA_SUCCESS': {
       return {
         ...state,
         tickets: sortPrice(action.payload.tickets, state.limit, action.payload),
         allTickets: [...action.payload],
-        isLoading: true
+        isLoading: true,
       };
-    case 'FETCH_DATA_ALL_SUCCESS':
+    }
+    case 'FETCH_DATA_ALL_SUCCESS': {
       return {
         ...state,
         allTickets: [...action.payload],
-        isLoading: false
+        isLoading: false,
       };
+    }
+    case 'FETCH_DATA_FAILURE': {
+      return {
+        ...state,
+        tickets: [],
+        isLoading: true,
+        error: action.payload,
+      };
+    }
     default:
       return state;
   }

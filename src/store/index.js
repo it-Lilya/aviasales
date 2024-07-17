@@ -1,10 +1,11 @@
-import { configureStore, applyMiddleware } from "@reduxjs/toolkit";
-import sortedReducer from "./sortedReducer";
-import {thunk} from 'redux-thunk';
+import { configureStore, applyMiddleware } from '@reduxjs/toolkit';
+import { thunk } from 'redux-thunk';
+
+import sortedReducer from './sortedReducer';
 
 const store = configureStore({
   reducer: sortedReducer,
-  middlewareApply: applyMiddleware(thunk)
+  middlewareApply: applyMiddleware(thunk),
 });
 
 export default store;

@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import classes from './App.module.scss';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import LeftColumn from '../LeftColumn/LeftColumn';
 import RightColumn from '../RightColumn/RightColumn';
 import * as actions from '../../store/actions';
-import {fetchDataRequest} from '../../store/actions';
-import { connect, useDispatch, useSelector  } from "react-redux";
-import { bindActionCreators } from "redux";
+import { fetchDataRequest } from '../../store/actions';
 import { fetchData } from '../../store/asyncAction';
+
+import classes from './App.module.scss';
 
 queueMicrotask(() => {
   fetch('https://aviasales-test-api.kata.academy/search')
@@ -14,13 +16,13 @@ queueMicrotask(() => {
     .then((data) => {
       localStorage.setItem('id', JSON.stringify(data.searchId));
     });
-})
+});
 
-function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
+function App({ cheap, fast, optimal, all, no, one, two, third, none, toggle }) {
   const [filters, setFilters] = useState('cheap');
   const [tickets, setTickets] = useState([]);
-  const sortData = useSelector(state => state.tickets);
-  const loaded = useSelector(state => state.isLoading);
+  const sortData = useSelector((state) => state.tickets);
+  const loaded = useSelector((state) => state.isLoading);
   const [limit, setLimit] = useState(5);
   const [arr, setArr] = useState(['all']);
   const progressBar = useRef(null);
@@ -35,9 +37,11 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
   useEffect(() => {
     dispatch(fetchDataRequest());
     setTimeout(() => {
-      dispatch(fetchData(`https://aviasales-test-api.kata.academy/tickets?searchId=${JSON.parse(localStorage.getItem('id'))}`));
+      dispatch(
+        fetchData(`https://aviasales-test-api.kata.academy/tickets?searchId=${JSON.parse(localStorage.getItem('id'))}`)
+      );
     }, 100);
-    setIntervals(() => setInterval(() => increase() , 100))
+    setIntervals(() => setInterval(() => increase(), 100));
     setLoadedState(loaded);
   }, []);
   useEffect(() => {
@@ -63,7 +67,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
         setLoadedState(false);
       }, 1000);
     }
-  }, [loaded])
+  }, [loaded]);
   function increase() {
     if (loaderRef.current <= 100) {
       loaderRef.current = loaderRef.current + 1.2;
@@ -74,13 +78,13 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
       setTimeout(() => {
         setIntervals(clearInterval(intervals));
         setLoadedState(false);
-      }, 350)
+      }, 350);
     }
-    return loaderRef.current
+    return loaderRef.current;
   }
   function putChecked(e) {
     let arr = [];
-    let arrCheck= [];
+    let arrCheck = [];
     let current;
     if (e.target.tagName === 'LI') {
       current = e.target.querySelector('input');
@@ -90,7 +94,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
     const inputs = document.querySelectorAll('.input');
     if (!current.checked) {
       if (current.value === 'all') {
-        inputs.forEach((el) => el.checked = current.checked);
+        inputs.forEach((el) => (el.checked = current.checked));
         document.querySelectorAll('input').forEach((e) => {
           e.checked = false;
           e.classList.remove('check');
@@ -105,7 +109,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
       current.classList.remove('check');
     } else {
       if (current.value === 'all') {
-        inputs.forEach((el) => el.checked = current.checked);
+        inputs.forEach((el) => (el.checked = current.checked));
         document.querySelectorAll('input').forEach((e) => {
           e.checked = true;
           e.classList.add('check');
@@ -121,23 +125,23 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
     }
     inputs.forEach((el) => {
       if (el.checked) {
-        arr.push(el.value)
+        arr.push(el.value);
       }
     });
     if (arr.length === 4) {
-      document.querySelector('.input__all').checked = true; 
+      document.querySelector('.input__all').checked = true;
       document.querySelector('.input__all').classList.add('check');
     }
     document.querySelectorAll('.check').forEach((el) => {
       if (arrCheck.length === 4 && !arrCheck.find((e) => e == 'all')) {
-        arrCheck = ['all']
+        arrCheck = ['all'];
       } else {
-        arrCheck.push(el.className.split(' ')[1])
+        arrCheck.push(el.className.split(' ')[1]);
       }
-     })
+    });
 
-     const dataTickets = JSON.parse(localStorage.getItem('tickets'));
-     if (arrCheck.length === 0) {
+    const dataTickets = JSON.parse(localStorage.getItem('tickets'));
+    if (arrCheck.length === 0) {
       arrCheck = ['none'];
       none(dataTickets, arrCheck);
     }
@@ -151,8 +155,8 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
       } else if (current.classList.contains('two_transfers')) {
         two(arrCheck, dataTickets, limit);
       } else if (current.classList.contains('third_transfers')) {
-        third(arrCheck, dataTickets, limit)
-      } 
+        third(arrCheck, dataTickets, limit);
+      }
     }
     if (current.checked !== true && current.value !== 'all') {
       toggle(dataTickets, arrCheck, current.className.split(' ')[1]);
@@ -173,7 +177,7 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
       }
       document.querySelectorAll('.filter').forEach((el) => {
         el.classList.remove(classes);
-      })
+      });
       e.target.classList.add(classes);
     }
   }
@@ -184,14 +188,26 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
   }
   return (
     <div className={classes.App}>
-      {loadedState ? 
-      (<div className="progress" style={{height: '10px', borderRadius: '0px', position: 'absolute', width: '100%', top: '0px', zIndex: '2'}}>
-          <div ref={progressBar} role="progressbar" className="progress-bar progress-bar-animated progress-bar-striped" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style={{width: "20%"}}></div>
-        </div>) : null} 
+      {loadedState ? (
+        <div
+          className="progress"
+          style={{ height: '10px', borderRadius: '0px', position: 'absolute', width: '100%', top: '0px', zIndex: '2' }}
+        >
+          <div
+            ref={progressBar}
+            role="progressbar"
+            className="progress-bar progress-bar-animated progress-bar-striped"
+            aria-valuenow="20"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style={{ width: '20%' }}
+          ></div>
+        </div>
+      ) : null}
       <div className={classes.container}>
         <div className={classes.logo}></div>
         <div className={classes.columns}>
-          <LeftColumn putChecked={putChecked}/>
+          <LeftColumn putChecked={putChecked} />
           <RightColumn data={tickets} sorterHandler={sorterHandler} limits={limits} arr={arr} />
         </div>
       </div>
@@ -200,8 +216,8 @@ function App({cheap, fast, optimal, all, no, one, two, third, none, toggle}) {
 }
 const mapStateToProps = (state) => {
   return {
-    tickets: state.tickets
-  }
+    tickets: state.tickets,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
