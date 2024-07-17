@@ -19,6 +19,7 @@ const sortPrice = (arr, limit, all, prevLimit) => {
 
 const sortDuration = (arr, limit, all, prevLimit) => {
   if (limit !== prevLimit) {
+    // console.log(all.slice(0, limit).sort((a, b) => a.segments[0].duration - b.segments[0].duration));
     // localStorage.setItem('tickets', JSON.stringify(all.slice(0, limit)));
     return all.slice(0, limit).sort((a, b) => a.segments[0].duration - b.segments[0].duration);
   }
@@ -84,7 +85,18 @@ const removeDuplicates = (arr) => {
 
   return uniqueTickets;
 };
-
+const searchDirection = (arr, quantity) => {
+  let oneSegments = arr.filter((el) => el.segments[0].stops.length === quantity);
+  let twoSegments = arr.filter((el) => el.segments[1].stops.length === quantity);
+  if (oneSegments.length > 0 && twoSegments.length > 0) {
+    return twoSegments.concat(oneSegments);
+  }
+  if (oneSegments.length === 0) {
+    return twoSegments;
+  } else {
+  return oneSegments;
+  }
+}
 const sortedReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'CHEAP':
@@ -163,7 +175,8 @@ const sortedReducer = (state = initialState, action) => {
       resNo = filerSort(resNo, state, action);
       return {
         ...state,
-        tickets: removeDuplicates([state.tickets, filerSort(resNo, state, action).filter((el) => el.segments[0].stops.length === 0)].flat()),
+        tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resNo, state, action), 0),].flat()),
+        // tickets: removeDuplicates([state.tickets, filerSort(resNo, state, action).filter((el) => el.segments[0].stops.length === 0)].flat()),
         filters: action.filters,
         limit: action.limit
       };
@@ -172,7 +185,8 @@ const sortedReducer = (state = initialState, action) => {
       resOne = filerSort(resOne, state, action);
       return {
         ...state,
-        tickets: removeDuplicates([state.tickets, filerSort(resOne, state, action).filter((el) => el.segments[0].stops.length === 1)].flat()),
+        tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resOne, state, action), 1)].flat()),
+        // tickets: removeDuplicates([state.tickets, filerSort(resOne, state, action).filter((el) => el.segments[0].stops.length === 1)].flat()),
         filters: action.filters,
         limit: action.limit
       };
@@ -181,7 +195,8 @@ const sortedReducer = (state = initialState, action) => {
       resTwo = filerSort(resTwo, state, action);
       return {
         ...state,
-        tickets: removeDuplicates([state.tickets, filerSort(resTwo, state, action).filter((el) => el.segments[0].stops.length === 2)].flat()),
+        tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resTwo, state, action), 2)].flat()),
+        // tickets: removeDuplicates([state.tickets, filerSort(resTwo, state, action).filter((el) => el.segments[0].stops.length === 2)].flat()),
         filters: action.filters,
         limit: action.limit
       };
@@ -190,7 +205,8 @@ const sortedReducer = (state = initialState, action) => {
       resThird = filerSort(resThird, state, action);
       return {
         ...state,
-        tickets: removeDuplicates([state.tickets, filerSort(resThird, state, action).filter((el) => el.segments[0].stops.length === 3)].flat()),
+        tickets: removeDuplicates([state.tickets, searchDirection(filerSort(resThird, state, action), 3)].flat()),
+        // tickets: removeDuplicates([state.tickets, filerSort(resThird, state, action).filter((el) => el.segments[0].stops.length === 3)].flat()),
         filters: action.filters,
         limit: action.limit
       };
