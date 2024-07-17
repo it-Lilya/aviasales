@@ -200,7 +200,7 @@ function App({ cheap, fast, optimal, all, no, one, two, third, none, toggle }) {
             aria-valuenow="20"
             aria-valuemin="0"
             aria-valuemax="100"
-            style={{ width: '20%' }}
+            style={{ width: '0%' }}
           ></div>
         </div>
       ) : null}
