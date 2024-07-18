@@ -50,14 +50,42 @@ function App({ cheap, fast, optimal, all, no, one, two, third, none, toggle }) {
       e.classList.add('check');
     });
   }, []);
+  // function sd() {
+  //   const dataTickets = JSON.parse(localStorage.getItem('tickets'));
+  //   arr.forEach((el) => {
+  //     if (el === 'none') {
+  //       none(dataTickets, arr);
+  //     } else if (el === 'one') {
+  //       one(dataTickets, arr, limit);
+  //     } else if (el === 'two') {
+  //       two(dataTickets, arr, limit);
+  //     } else if (el === 'third') {
+  //       third(dataTickets, arr, limit);
+  //     }
+  //   });
+  // }
   useEffect(() => {
     if (filters === 'cheap') {
       cheap(limit);
+      // console.log('asd');
+      // sd();
     } else if (filters === 'fast') {
       fast(limit);
     } else {
       optimal(limit);
     }
+    // const dataTickets = JSON.parse(localStorage.getItem('tickets'));
+    // arr.forEach((el) => {
+    //   if (el === 'none') {
+    //     none(dataTickets, arr);
+    //   } else if (el === 'one') {
+    //     one(dataTickets, arr, limit);
+    //   } else if (el === 'two') {
+    //     two(dataTickets, arr, limit);
+    //   } else if (el === 'third') {
+    //     third(dataTickets, arr, limit);
+    //   }
+    // });
   }, [limit]);
   useEffect(() => {
     if (loaded === false) {
