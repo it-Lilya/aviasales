@@ -7,7 +7,6 @@ import Card from '../Card/Card';
 import classes from './RightColumn.module.scss';
 
 export default function RightColumn({ data = [], sorterHandler, limits, arr }) {
-  // const [resultData, setResultData] = useState(data);
   const [flag, setFlag] = useState(true);
   useEffect(() => {
     if (arr[0] === 'none') {

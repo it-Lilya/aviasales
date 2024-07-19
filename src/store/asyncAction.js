@@ -1,4 +1,4 @@
-import { fetchDataAllSuccess, fetchDataSuccess } from './actions';
+import { fetchDataAllSuccess, fetchDataSuccess, fetchDataFailure } from './actions';
 
 let arr = [];
 let done = false;
@@ -7,8 +7,9 @@ export const fetchData = (url) => {
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        // console.log(response.status);
-        // dispatch(fetchDataFailure(response.status));
+        if (response.status < 500 && response.status > 599) {
+          dispatch(fetchDataFailure(response.status));
+        }
         throw new Error(`Ошибка: ${response.status}`);
       }
       const res = await response.json();
@@ -27,14 +28,7 @@ export const fetchData = (url) => {
         }
       }
     } catch (error) {
-      // dispatch(fetchDataFailure(error.message));
       return func(dispatch);
-      // if (error.message.includes('500')) {
-      //   dispatch(fetchDataFailure(error.message));
-      //   return func(dispatch);
-      // } else {
-      //   return func(dispatch);
-      // }
     }
   };
 };
