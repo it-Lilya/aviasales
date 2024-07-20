@@ -108,6 +108,17 @@ const searchDirection = (arr, quantity) => {
     return oneSegments;
   }
 };
+const checkSort = (arr, sort) => {
+  if (sort === 'cheap') {
+    return arr.sort((a, b) => a.price - b.price);
+  } else if (sort === 'fast') {
+    return arr.sort((a, b) => a.segments[0].duration - b.segments[0].duration);
+  } else if (sort === 'optimal') {
+    return arr.sort(
+      (a, b) => a.segments[0].duration + a.segments[1].duration - (b.segments[0].duration + b.segments[1].duration)
+    );
+  }
+};
 const sortedReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'CHEAP': {
@@ -139,6 +150,12 @@ const sortedReducer = (state = initialState, action) => {
           tickets: removeDuplicates(res.flat()).sort((a, b) => a.price - b.price),
           sorted: 'cheap',
         };
+      } else if (state.filters.length === 1 && state.filters[0] === 'all') {
+        return {
+          ...state,
+          tickets: array.sort((a, b) => a.price - b.price),
+          sorted: 'cheap',
+        };
       } else {
         let res = [];
         state.filters.forEach((el) => {
@@ -150,6 +167,8 @@ const sortedReducer = (state = initialState, action) => {
             res.push(searchDirection(array.flat(), 3));
           } else if (el === 'no_transfers') {
             res.push(searchDirection(array.flat(), 0));
+          } else if (el === 'all') {
+            res = array;
           }
         });
         return {
@@ -287,9 +306,11 @@ const sortedReducer = (state = initialState, action) => {
       } else if (state.sorted === 'optimal') {
         resAll = sortOptimal(action.payload, action.limit, state.allTickets, state.limit);
       }
+      console.log(resAll);
       return {
         ...state,
         tickets: filterSort(resAll, state, action),
+        // tickets: checkSort(resAll, state.sorted),
         filters: action.filters,
       };
     }
@@ -305,7 +326,8 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        tickets: filterSort(resNo, action.filters, state, action),
+        // tickets: filterSort(resNo, state, action),
+        tickets: checkSort(resNo, state.sorted),
         filters: action.filters,
         limit: action.limit,
       };
@@ -322,7 +344,8 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        tickets: filterSort(resOne, action.filters, state, action),
+        // tickets: filterSort(resOne, state, action),
+        tickets: checkSort(resOne, state.sorted),
         filters: action.filters,
         limit: action.limit,
       };
@@ -339,7 +362,8 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        tickets: filterSort(resTwo, action.filters, state, action),
+        // tickets: filterSort(resTwo, state, action),
+        tickets: checkSort(resTwo, state.sorted),
         filters: action.filters,
         limit: action.limit,
       };
@@ -356,7 +380,8 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        tickets: filterSort(resThird, action.filters, state, action),
+        // tickets: filterSort(resThird, state, action),
+        tickets: checkSort(resThird, state.sorted),
         filters: action.filters,
         limit: action.limit,
       };

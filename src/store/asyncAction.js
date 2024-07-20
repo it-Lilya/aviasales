@@ -9,8 +9,9 @@ export const fetchData = (url) => {
       if (!response.ok) {
         if (response.status < 500 && response.status > 599) {
           dispatch(fetchDataFailure(response.status));
+        } else if (response.status >= 500 && response.status < 600) {
+          throw new Error(`Ошибка: ${response.status}`);
         }
-        throw new Error(`Ошибка: ${response.status}`);
       }
       const res = await response.json();
       if (res.stop === false) {
