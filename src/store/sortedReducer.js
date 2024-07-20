@@ -306,11 +306,9 @@ const sortedReducer = (state = initialState, action) => {
       } else if (state.sorted === 'optimal') {
         resAll = sortOptimal(action.payload, action.limit, state.allTickets, state.limit);
       }
-      console.log(resAll);
       return {
         ...state,
         tickets: filterSort(resAll, state, action),
-        // tickets: checkSort(resAll, state.sorted),
         filters: action.filters,
       };
     }
@@ -326,7 +324,6 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        // tickets: filterSort(resNo, state, action),
         tickets: checkSort(resNo, state.sorted),
         filters: action.filters,
         limit: action.limit,
@@ -344,7 +341,6 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        // tickets: filterSort(resOne, state, action),
         tickets: checkSort(resOne, state.sorted),
         filters: action.filters,
         limit: action.limit,
@@ -362,7 +358,6 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        // tickets: filterSort(resTwo, state, action),
         tickets: checkSort(resTwo, state.sorted),
         filters: action.filters,
         limit: action.limit,
@@ -380,7 +375,6 @@ const sortedReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        // tickets: filterSort(resThird, state, action),
         tickets: checkSort(resThird, state.sorted),
         filters: action.filters,
         limit: action.limit,
